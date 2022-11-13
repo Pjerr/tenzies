@@ -6,16 +6,18 @@ export class Main extends React.Component {
     super(props);
     this.state = {
       diceArray: [],
+      gameOver: false,
     };
     this.state.diceArray = this.allNewDice();
 
     this.rollNewDice = this.rollNewDice.bind(this);
     this.freezeDice = this.freezeDice.bind(this);
+    this.isGameOver = this.isGameOver.bind(this);
   }
 
   allNewDice() {
     let array = [];
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 4; i++) {
       let value = Math.floor(Math.random() * 6 + 1);
       array.push({ id: i, diceValue: value, frozen: false });
     }
@@ -23,16 +25,21 @@ export class Main extends React.Component {
   }
 
   rollNewDice() {
-    const newDiceArray = this.allNewDice();
-    const oldDiceArray = this.state.diceArray;
-    console.log(newDiceArray);
-    oldDiceArray.map((diceObject) => {
-      if (diceObject.frozen) {
-        newDiceArray[diceObject.id] = { ...diceObject };
-      }
-    });
-    console.log(newDiceArray);
+    let newDiceArray = this.allNewDice();
+    const oldDiceArray = this.state.diceArray.splice();
+
+    if (!this.state.gameOver) {
+      oldDiceArray.map((diceObject) => {
+        if (diceObject.frozen) {
+          newDiceArray[diceObject.id] = { ...diceObject };
+        }
+      });
+    }
     this.setState({ diceArray: newDiceArray });
+
+    if (this.isGameOver()) {
+      this.setState({ gameOver: true });
+    }
   }
 
   freezeDice(index) {
@@ -41,6 +48,14 @@ export class Main extends React.Component {
     const newDie = { ...oldDie, frozen: !oldDie.frozen };
     diceArray.splice(index, 1, newDie);
     this.setState({ diceArray });
+  }
+
+  isGameOver() {
+    const diceArray = this.state.diceArray;
+    const result = diceArray.every((diceElement) => {
+      if (diceElement.diceValue === diceArray[0].diceValue) return true;
+    });
+    return result;
   }
 
   render() {
@@ -55,7 +70,7 @@ export class Main extends React.Component {
       <main className="main">
         <div className="dice-container">{diceData}</div>
         <button className="roll-dice-button" onClick={this.rollNewDice}>
-          Roll
+          {this.state.gameOver ? "Again" : "Roll"}
         </button>
       </main>
     );
