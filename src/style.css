@@ -43,3 +43,16 @@ main {
 .die-value {
   font-size: 2rem;
 }
+
+.roll-dice-button {
+  font-size: 2rem;
+  border-radius: 5px;
+  margin-top: 2rem;
+  padding: 10px 30px;
+  color: white;
+  background: linear-gradient(90deg, #672280 1.18%, #a626d3 100%);
+}
+
+.frozen {
+  background-color: #8db255;
+}
